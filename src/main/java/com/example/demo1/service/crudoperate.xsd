@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified"
+            targetNamespace="http://demo.com/OrderXMLSchema_v1"
+            xmlns:tns="http://demo.com/OrderXMLSchema_v1">
+
+    <xsd:element name="crudOperation" type="tns:crudOperation"></xsd:element>
+
+    <xsd:simpleType name="operationType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="insert"/>
+            <xsd:enumeration value="delete"/>
+            <xsd:enumeration value="update"/>
+            <xsd:enumeration value="select"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="nameType">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"></xsd:minLength>
+            <xsd:maxLength value="20"></xsd:maxLength>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="priceType">
+        <xsd:restriction base="xsd:decimal">
+            <xsd:minInclusive value="0"></xsd:minInclusive>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="crudOperation">
+        <xsd:sequence maxOccurs="1" minOccurs="1">
+            <xsd:element name="operation" type="tns:operationType" maxOccurs="1" minOccurs="1">
+            </xsd:element>
+            <xsd:element name="item" type="tns:item" maxOccurs="unbounded"  minOccurs="1"></xsd:element>
+         </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="item">
+        <xsd:sequence maxOccurs="unbounded" minOccurs="1">
+            <xsd:element name="name" type="tns:nameType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="date" type="xsd:date" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="price" type="tns:priceType" minOccurs="1" maxOccurs="1" />
+        </xsd:sequence>
+        <!--<xsd:attribute name="index" type="xsd:unsignedLong" />-->
+    </xsd:complexType>
+</xsd:schema>

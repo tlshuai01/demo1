@@ -1,0 +1,83 @@
+package com.example.demo1.service;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.SAXValidator;
+import org.dom4j.io.XMLWriter;
+import org.dom4j.util.XMLErrorHandler;
+import org.slf4j.ILoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+import java.io.*;
+import java.net.URL;
+import java.util.List;
+
+@Service
+public class ValidateXml {
+    private static final Log logger = LogFactory.getLog(ValidateXml.class);
+    public  boolean validateXML(String xsdPath, String xmlData) {
+        // 建立schema工厂
+        SchemaFactory schemaFactory = SchemaFactory
+                .newInstance("http://www.w3.org/2001/XMLSchema");
+        // 建立验证文档文件对象，利用此文件对象所封装的文件进行schema验证
+        xsdPath = ValidateXml.class.getClass().getResource("/").getPath()+
+                "com/example/demo1/util/crudoperate.xsd";
+        System.out.println(xsdPath);
+        File schemaFile = new File(xsdPath);
+        // 利用schema工厂，接收验证文档文件对象生成Schema对象
+        Schema schema = null;
+        try {
+            schema = schemaFactory.newSchema(schemaFile);
+        } catch (SAXException e) {
+            e.printStackTrace();
+        }
+        // 通过Schema产生针对于此Schema的验证器，利用schenaFile进行验证
+        Validator validator = schema.newValidator();
+        // 得到验证的数据源
+        Source source = new StreamSource(String2InputStream(xmlData));
+        // 开始验证，成功输出success!!!，失败输出fail
+        // 参数还可以用文件的String转为的inputstreamnew
+        // ByteArrayInputStream(text.getBytes("UTF-8"));
+        try {
+            validator.validate(source);
+        } catch (Exception e) {
+            StringWriter sw=new StringWriter();
+            e.printStackTrace(new PrintWriter(sw,true));
+            logger.error("详细的错误信息=="+sw.toString());
+            return false;
+        }
+        return true;
+    }
+    /**
+     * 将字符串转换为流对象
+     * @param str
+     *            需要装的字符串
+     * @return 返回流对象
+     * @since CodingExample Ver(编码范例查看) 1.1
+     */
+    private static InputStream String2InputStream(String str) {
+        ByteArrayInputStream stream = null;
+        try {
+            stream = new ByteArrayInputStream(str.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return stream;
+    }
+
+
+}
+
