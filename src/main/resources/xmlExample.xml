@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<crudOperation xmlns="http://demo.com/OrderXMLSchema_v1"
+               xmlns:server="http://demo.com/OrderXMLSchema_v1"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <operation>update</operation>
+    <item >
+        <name>xiaomi</name>
+        <date>2021-07-02</date>
+        <price>2499.00</price>
+    </item>
+
+</crudOperation>

@@ -6,8 +6,6 @@ import com.example.demo1.service.CrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 
 import java.util.Date;
@@ -20,7 +18,7 @@ public class CrudServiceImpl implements CrudService {
     private ItemDao itemDao;
 
     @Override
-    public List  findItemByName(String name) {
+    public List<ItemModel>  findItemByName(String name) {
         return itemDao.selectItemByName(name);
     }
     @Override
