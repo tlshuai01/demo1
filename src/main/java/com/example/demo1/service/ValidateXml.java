@@ -1,5 +1,6 @@
 package com.example.demo1.service;
 
+import com.example.demo1.VO.ItemVo;
 import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
@@ -13,5 +14,5 @@ import javax.xml.parsers.SAXParserFactory;
 
 
 public interface ValidateXml {
-    public  void validateXMLByXSD(Document document);
+    public ItemVo validateXMLByXSD(Document document);
 }

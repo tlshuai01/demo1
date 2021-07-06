@@ -13,6 +13,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class ItemVo {
     @XmlElement
+    private String xsdState;
+    @XmlElement
     private String msg;
     @XmlElement
     private String name;

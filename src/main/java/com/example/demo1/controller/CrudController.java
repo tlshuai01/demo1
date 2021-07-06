@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,7 +27,7 @@ import java.util.Iterator;
 
 @Controller
 public class CrudController {
-    
+
     private static final Log logger = LogFactory.getLog(CrudController.class);
     @Autowired
     private CrudService crudService;
@@ -39,9 +43,10 @@ public class CrudController {
         //将接收到的xml请求转换为string存储
         logger.info("接受XML数据成功！");
         Document doc = (Document) DocumentHelper.parseText(str);
-
         //转换为document类型，用SAX进行解析，之后使用SAXValidator将xml与xsd进行校验
-        validateXml.validateXMLByXSD(doc);
+        ItemVo itemVo;
+        itemVo = validateXml.validateXMLByXSD(doc);
+        if(itemVo.getXsdState().equals("xsd校验成功！")){
         //读取xml文件中各个元素信息
         Element root = doc.getRootElement();
         //获取根元素下的所有子元素（通过迭代器）
@@ -60,8 +65,9 @@ public class CrudController {
             Element price1 = item.element("price");
             BigDecimal price= new BigDecimal(price1.getText());
             crudService.save(name,date,price);
-            itemVo = new ItemVo();
-            itemVo = castList2Vo(crudService.findItemByName(name).get(0));
+            itemVo = castList2Vo(crudService.findItemByName(name).get(0),itemVo);
+
+            System.out.println(itemVo.getName()+"name");
             itemVo.setMsg("新增数据成功！");
 
         }
@@ -71,8 +77,10 @@ public class CrudController {
             Element item  = it.next();
             String name = item.element("name").getText();
             crudService.deleteByName(name);
-            itemVo = new ItemVo();
             itemVo.setMsg("数据删除成功");
+            itemVo.setName(name);
+            itemVo.setDate(null);
+            itemVo.setPrice(null);
 
         }
 
@@ -86,8 +94,7 @@ public class CrudController {
             Element price1 = item.element("price");
             BigDecimal price= new BigDecimal(price1.getText());
             crudService.updateByName(name,date,price);
-            itemVo = new ItemVo();
-            itemVo = castList2Vo(crudService.findItemByName(name).get(0));
+            itemVo = castList2Vo(crudService.findItemByName(name).get(0),itemVo);
             itemVo.setMsg("更新成功！");
 
         }
@@ -96,14 +103,13 @@ public class CrudController {
         if(operation.equals("select") || operation.equals("SELECT")){
             Element item  = it.next();
             String name = item.element("name").getText();
-            itemVo = new ItemVo();
-            itemVo = castList2Vo(crudService.findItemByName(name).get(0));
+            itemVo = castList2Vo(crudService.findItemByName(name).get(0),itemVo);
             itemVo.setMsg("查询成功！");
+        }
         }
         return itemVo;
     }
-    ItemVo castList2Vo(ItemModel itemModel){
-        ItemVo itemVo = new ItemVo();
+    ItemVo castList2Vo(ItemModel itemModel,ItemVo itemVo){
         itemVo.setName(itemModel.getName());
         itemVo.setDate(itemModel.getDate());
         itemVo.setPrice(itemModel.getPrice());
